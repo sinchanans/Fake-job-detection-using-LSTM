@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fake Job Detector Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* --- CSS Variables for Theming --- */
+    :root {
+      --bg-color: #f0f2f5;
+      --main-text-color: #333;
+      --secondary-text-color: #555;
+      --card-bg-color: white;
+      --sidebar-bg-color: #0b3d91;
+      --sidebar-text-color: white;
+      --tip-bg-color: #e7f3fe;
+      --tip-border-color: #0b3d91;
+      --shadow-color: rgba(0,0,0,0.05);
+    }
+
+    body.dark-mode {
+      --bg-color: #121212;
+      --main-text-color: #e0e0e0;
+      --secondary-text-color: #a0a0a0;
+      --card-bg-color: #1e1e1e;
+      --sidebar-bg-color: #1a1a1a;
+      --sidebar-text-color: #e0e0e0;
+      --tip-bg-color: #2a2a3a;
+      --tip-border-color: #8a9ff0;
+      --shadow-color: rgba(0,0,0,0.2);
+    }
+    /* --- End of Theming Variables --- */
+
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-color);
+      display: flex;
+      color: var(--main-text-color);
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .sidebar {
+      width: 250px;
+      background-color: var(--sidebar-bg-color);
+      color: var(--sidebar-text-color);
+      height: 100vh;
+      padding: 20px;
+      position: fixed;
+      transition: width 0.3s, background-color 0.3s;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar.collapsed {
+      width: 70px;
+    }
+
+    .sidebar h2, .sidebar a span {
+      transition: opacity 0.3s;
+    }
+
+    .sidebar.collapsed h2,
+    .sidebar.collapsed a span {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .toggle-btn {
+      cursor: pointer;
+      margin-bottom: 20px;
+      background: none;
+      border: none;
+      color: var(--sidebar-text-color);
+      font-size: 20px;
+    }
+
+    .sidebar a {
+      color: var(--sidebar-text-color);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: background-color 0.2s;
+    }
+    
+    .sidebar a:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar i {
+      width: 25px;
+      margin-right: 10px;
+    }
+
+    .main-content {
+      margin-left: 270px;
+      padding: 30px;
+      width: calc(100% - 270px);
+      transition: margin-left 0.3s, width 0.3s;
+    }
+
+    .collapsed + .main-content {
+      margin-left: 90px;
+      width: calc(100% - 90px);
+    }
+    
+    header {
+        margin-bottom: 30px;
+    }
+    
+    header h1 {
+        font-size: 28px;
+        font-weight: 700;
+        margin: 0;
+    }
+    
+    header p {
+        color: var(--secondary-text-color);
+        font-size: 16px;
+    }
+
+    .cards-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 25px;
+    }
+    
+    .card {
+      background-color: var(--card-bg-color);
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px var(--shadow-color);
+      line-height: 1.6;
+      transition: background-color 0.3s;
+    }
+    
+    .card.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .card h3 {
+        margin-top: 0;
+        font-size: 18px;
+        font-weight: 600;
+        color: #0b3d91;
+        display: flex;
+        align-items: center;
+    }
+    
+    body.dark-mode .card h3 {
+        color: #8a9ff0;
+    }
+    
+    .card h3 i {
+        margin-right: 10px;
+    }
+    
+    .card ul {
+        padding-left: 20px;
+        margin-bottom: 0;
+    }
+    
+    .tip-box {
+        grid-column: 1 / -1;
+        background-color: var(--tip-bg-color);
+        border-left: 5px solid var(--tip-border-color);
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px var(--shadow-color);
+        display: flex;
+        align-items: center;
+        transition: background-color 0.3s, border-color 0.3s;
+    }
+
+    .tip-box i {
+        font-size: 24px;
+        color: var(--tip-border-color);
+        margin-right: 15px;
+    }
+    
+    #feedback-float {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 9999;
+      text-align: right;
+    }
+
+    #feedback-toggle {
+      background-color: #0b3d91;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    #feedback-form {
+      margin-top: 10px;
+      background-color: var(--card-bg-color);
+      padding: 15px;
+      border-radius: 10px;
+      width: 280px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+    }
+
+    #feedback-form input,
+    #feedback-form select,
+    #feedback-form textarea {
+      width: 100%;
+      margin: 8px 0;
+      padding: 8px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background-color: var(--bg-color);
+      color: var(--main-text-color);
+    }
+
+    #feedback-form button {
+      background-color: #0b3d91;
+      color: white;
+      padding: 10px 14px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    
+    /* --- Theme Toggle Switch --- */
+    .theme-switcher {
+        margin-top: auto; /* Pushes to the bottom */
+        padding: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .theme-switcher span {
+        margin: 0 10px;
+        font-size: 16px;
+    }
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 26px;
+    }
+    .switch input { 
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 26px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: #2196F3;
+    }
+    input:checked + .slider:before {
+      transform: translateX(24px);
+    }
+    /* --- End of Theme Switcher --- */
+
+  </style>
+</head>
+<body>
+
+<div class="sidebar" id="sidebar">
+  <div>
+    <button class="toggle-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+    <h2>👨‍💼 {{ user_data.name }}</h2>
+    <a href="/dashboard"><i class="fas fa-circle-info"></i> <span>Fake Job Info</span></a>
+    <a href="/text_scan"><i class="fas fa-keyboard"></i> <span>Text Scan</span></a>
+    <a href="/image_scan"><i class="fas fa-image"></i> <span>Image Scan</span></a>
+    <a href="/history"><i class="fas fa-clock"></i> <span>History</span></a>
+    <a href="/profile"><i class="fas fa-user"></i> <span>My Profile</span></a>
+  </div>
+  
+  <div class="theme-switcher">
+      <i class="fas fa-sun"></i>
+      <label class="switch">
+          <input type="checkbox" id="theme-toggle">
+          <span class="slider"></span>
+      </label>
+      <i class="fas fa-moon"></i>
+  </div>
+  <a href="/logout"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>
+</div>
+
+<div class="main-content" id="main-content">
+  
+  <header>
+      <h1>Dashboard</h1>
+      <p>Welcome to the Fake Job Detection System. Stay alert and stay safe!</p>
+  </header>
+
+  <div class="cards-container">
+      <div class="card full-width">
+          <h3><i class="fas fa-shield-alt"></i> How This System Helps You</h3>
+          <p>This system is designed to protect you from job scams. You can copy and paste any job description, or upload an image of an offer, to get an instant analysis of whether it is likely to be real or fake.</p>
+      </div>
+
+      <div class="card">
+          <h3><i class="fas fa-flag"></i> What Are Fake Jobs?</h3>
+          <ul>
+              <li>Jobs that ask you to pay money to apply or get selected.</li>
+              <li>Jobs that sound “too good to be true” with very high salaries.</li>
+              <li>Posts that don’t provide clear company details or contact info.</li>
+              <li>Jobs that are shared only through WhatsApp or Telegram.</li>
+          </ul>
+      </div>
+      
+      <div class="card">
+          <h3><i class="fas fa-search"></i> How to Use the Scanner</h3>
+           <ul>
+              <li>Use the menu on the left to start scanning.</li>
+              <li>For text, simply paste the job description into the text box.</li>
+              <li>For images, upload a clear screenshot of the job offer.</li>
+              <li>You can view all your previous scans in the History page.</li>
+          </ul>
+      </div>
+      
+      <div class="tip-box">
+          <i class="fas fa-lightbulb"></i>
+          <p id="security-tip">Loading security tip...</p>
+      </div>
+  </div>
+
+</div>
+<!-- Feedback Button (Floating) -->
+<div id="feedback-float">
+  <button id="feedback-toggle">💬 Feedback</button>
+  <div id="feedback-form" style="display: none;">
+    <form action="/submit_feedback" method="POST">
+      <input type="text" name="name" placeholder="Your Name" required>
+      <input type="email" name="email" placeholder="Your Email" required>
+      <select name="category" required>
+        <option value="">Select Category</option>
+        <option value="Bug Report">Bug Report</option>
+        <option value="Suggestion">Suggestion</option>
+        <option value="Question">Question</option>
+        <option value="Other">Other</option>
+      </select>
+      <textarea name="message" placeholder="Type your message..." rows="4" required></textarea>
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  function toggleSidebar() {
+    const sidebar = document.getElementById("sidebar");
+    sidebar.classList.toggle("collapsed");
+  }
+
+  document.getElementById("feedback-toggle").onclick = function () {
+    var form = document.getElementById("feedback-form");
+    form.style.display = (form.style.display === "none") ? "block" : "none";
+  };
+
+  document.addEventListener("DOMContentLoaded", function() {
+    // Security Tips Script
+    const tips = [
+      "<strong>Tip:</strong> Never pay a fee to secure a job offer. Legitimate employers will not ask for money.",
+      "<strong>Tip:</strong> Be wary of jobs that offer very high pay for very little work. If it sounds too good to be true, it probably is.",
+      "<strong>Tip:</strong> Legitimate companies will email you from a corporate domain (e.g., @company.com), not a personal one like @gmail.com.",
+      "<strong>Tip:</strong> Check for spelling and grammar errors in the job description. Professional companies usually have professional listings.",
+      "<strong>Tip:</strong> Be cautious if the entire interview process is conducted over text messages or messaging apps like Telegram.",
+      "<strong>Tip:</strong> Never provide sensitive personal information like your bank account or credit card details early in the application process."
+    ];
+    const randomTip = tips[Math.floor(Math.random() * tips.length)];
+    document.getElementById("security-tip").innerHTML = randomTip;
+
+    // --- Theme Switcher Script ---
+    const themeToggle = document.getElementById('theme-toggle');
+    const body = document.body;
+
+    // Function to apply the theme
+    const applyTheme = (theme) => {
+        if (theme === 'dark') {
+            body.classList.add('dark-mode');
+            themeToggle.checked = true;
+        } else {
+            body.classList.remove('dark-mode');
+            themeToggle.checked = false;
+        }
+    };
+
+    // Check for saved theme in localStorage
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        applyTheme(savedTheme);
+    }
+
+    // Event listener for the toggle switch
+    themeToggle.addEventListener('change', () => {
+        if (themeToggle.checked) {
+            localStorage.setItem('theme', 'dark');
+            applyTheme('dark');
+        } else {
+            localStorage.setItem('theme', 'light');
+            applyTheme('light');
+        }
+    });
+  });
+</script>
+
+</body>
+</html>
+

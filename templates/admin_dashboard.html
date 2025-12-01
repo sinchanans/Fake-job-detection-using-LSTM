@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- CSS Variables for Theming --- */
+        :root {
+            --bg-color: #f4f6f8;
+            --main-text-color: #333;
+            --card-bg-color: white;
+            --header-bg-color: #0b3d91;
+            --header-text-color: white;
+            --link-color: #0b3d91;
+            --link-bg-color: #0b3d91;
+            --link-text-color: white;
+            --shadow-color: rgba(0,0,0,0.1);
+        }
+
+        body.dark-mode {
+            --bg-color: #121212;
+            --main-text-color: #e0e0e0;
+            --card-bg-color: #1e1e1e;
+            --header-bg-color: #1a1a1a;
+            --header-text-color: #e0e0e0;
+            --link-color: #8a9ff0;
+            --link-bg-color: #8a9ff0;
+            --link-text-color: #121212;
+            --shadow-color: rgba(0,0,0,0.2);
+        }
+        /* --- End of Theming Variables --- */
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-color);
+            color: var(--main-text-color);
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        header {
+            background-color: var(--header-bg-color);
+            color: var(--header-text-color);
+            padding: 20px 40px;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+        
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            background: var(--card-bg-color);
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px var(--shadow-color);
+            transition: background-color 0.3s;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: var(--link-color);
+        }
+
+        .admin-links {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .admin-links a {
+            background-color: var(--link-bg-color);
+            color: var(--link-text-color);
+            text-align: center;
+            padding: 20px;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: transform 0.2s, background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .admin-links a:hover {
+            transform: translateY(-3px);
+        }
+        
+        .logout-link {
+            grid-column: 1 / -1; /* Make logout span full width */
+            background-color: #e53e3e !important;
+            color: white !important;
+        }
+
+        /* --- Theme Toggle Switch --- */
+        .theme-switcher {
+            display: flex;
+            align-items: center;
+        }
+        .theme-switcher i {
+            margin: 0 10px;
+            font-size: 16px;
+        }
+        .switch {
+          position: relative;
+          display: inline-block;
+          width: 50px;
+          height: 26px;
+        }
+        .switch input { 
+          opacity: 0;
+          width: 0;
+          height: 0;
+        }
+        .slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: #ccc;
+          transition: .4s;
+          border-radius: 26px;
+        }
+        .slider:before {
+          position: absolute;
+          content: "";
+          height: 20px;
+          width: 20px;
+          left: 3px;
+          bottom: 3px;
+          background-color: white;
+          transition: .4s;
+          border-radius: 50%;
+        }
+        input:checked + .slider {
+          background-color: #2196F3;
+        }
+        input:checked + .slider:before {
+          transform: translateX(24px);
+        }
+        /* --- End of Theme Switcher --- */
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>🛡️ Admin Dashboard</h1>
+    <div class="theme-switcher">
+        <i class="fas fa-sun"></i>
+        <label class="switch">
+            <input type="checkbox" id="theme-toggle">
+            <span class="slider"></span>
+        </label>
+        <i class="fas fa-moon"></i>
+    </div>
+</header>
+
+<div class="container">
+    <h2>MENU</h2>
+    <div class="admin-links">
+        <a href="/admin/users"><i class="fas fa-users"></i> Manage Users</a>
+        <a href="/admin/scans"><i class="fas fa-file-alt"></i> View Scans</a>
+        <a href="/admin/analytics"><i class="fas fa-chart-bar"></i> View Analytics</a>
+        <a href="/admin/feedback"><i class="fas fa-comments"></i> User Feedback</a>
+        <a href="/logout" class="logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+
+        const applyTheme = (theme) => {
+            if (theme === 'dark') {
+                body.classList.add('dark-mode');
+                themeToggle.checked = true;
+            } else {
+                body.classList.remove('dark-mode');
+                themeToggle.checked = false;
+            }
+        };
+
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            applyTheme(savedTheme);
+        }
+
+        themeToggle.addEventListener('change', () => {
+            if (themeToggle.checked) {
+                localStorage.setItem('theme', 'dark');
+                applyTheme('dark');
+            } else {
+                localStorage.setItem('theme', 'light');
+                applyTheme('light');
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

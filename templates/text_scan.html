@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Text Scan – Fake Job Detector</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- ✅ SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        /* --- CSS Variables for Theming --- */
+        :root {
+            --bg-color: #f4f6f8;
+            --main-text-color: #333;
+            --card-bg-color: white;
+            --header-bg-color: #0b3d91;
+            --header-text-color: white;
+            --link-color: #0b3d91;
+            --button-bg-color: #0b3d91;
+            --button-text-color: white;
+            --input-border-color: #ccc;
+            --input-bg-color: white;
+            --shadow-color: rgba(0,0,0,0.1);
+            --success-bg: #dff0d8;
+            --success-text: #3c763d;
+            --warning-bg: #fff3cd;
+            --warning-text: #856404;
+        }
+
+        body.dark-mode {
+            --bg-color: #121212;
+            --main-text-color: #e0e0e0;
+            --card-bg-color: #1e1e1e;
+            --header-bg-color: #1a1a1a;
+            --header-text-color: #e0e0e0;
+            --link-color: #8a9ff0;
+            --button-bg-color: #8a9ff0;
+            --button-text-color: #121212;
+            --input-border-color: #444;
+            --input-bg-color: #2a2a2a;
+            --shadow-color: rgba(0,0,0,0.2);
+            --success-bg: #2a4c2a;
+            --success-text: #a7d7a7;
+            --warning-bg: #5a4a2a;
+            --warning-text: #e0c484;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-color);
+            color: var(--main-text-color);
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        header {
+            background-color: var(--header-bg-color);
+            color: var(--header-text-color);
+            padding: 20px 40px;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+        
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 40px auto;
+            background: var(--card-bg-color);
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px var(--shadow-color);
+            transition: background-color 0.3s;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: var(--link-color);
+        }
+
+        textarea {
+            width: 100%;
+            height: 180px;
+            padding: 15px;
+            font-size: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--input-border-color);
+            background-color: var(--input-bg-color);
+            color: var(--main-text-color);
+            resize: vertical;
+            margin-top: 10px;
+            box-sizing: border-box;
+            transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+        }
+
+        button {
+            background-color: var(--button-bg-color);
+            color: var(--button-text-color);
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .result, .warning {
+            margin-top: 25px;
+            font-size: 17px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .result {
+            background-color: var(--success-bg);
+            color: var(--success-text);
+        }
+
+        .warning {
+            background-color: var(--warning-bg);
+            color: var(--warning-text);
+        }
+
+        a {
+            color: var(--link-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back {
+            margin-top: 20px;
+            display: inline-block;
+        }
+
+        /* --- Theme Toggle Switch --- */
+        .theme-switcher {
+            display: flex;
+            align-items: center;
+        }
+        .theme-switcher i {
+            margin: 0 10px;
+            font-size: 16px;
+        }
+        .switch {
+          position: relative;
+          display: inline-block;
+          width: 50px;
+          height: 26px;
+        }
+        .switch input { 
+          opacity: 0;
+          width: 0;
+          height: 0;
+        }
+        .slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: #ccc;
+          transition: .4s;
+          border-radius: 26px;
+        }
+        .slider:before {
+          position: absolute;
+          content: "";
+          height: 20px;
+          width: 20px;
+          left: 3px;
+          bottom: 3px;
+          background-color: white;
+          transition: .4s;
+          border-radius: 50%;
+        }
+        input:checked + .slider {
+          background-color: #2196F3;
+        }
+        input:checked + .slider:before {
+          transform: translateX(24px);
+        }
+        /* --- End of Theme Switcher --- */
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>📝 Text Scan</h1>
+    <div class="theme-switcher">
+        <i class="fas fa-sun"></i>
+        <label class="switch">
+            <input type="checkbox" id="theme-toggle">
+            <span class="slider"></span>
+        </label>
+        <i class="fas fa-moon"></i>
+    </div>
+</header>
+
+<div class="container">
+    <h2>Paste Job Description</h2>
+    <form method="POST" onsubmit="return validateForm()">
+        <textarea name="text_input" id="text_input" placeholder="Paste the job description here...">{{ text or '' }}</textarea>
+        <button type="submit">Detect Fake Job</button>
+    </form>
+
+    {% if prediction %}
+        <div class="result">{{ prediction }} (Confidence: {{ confidence }}%)</div>
+    {% endif %}
+
+    {% if warning %}
+        <div class="warning">{{ warning }}</div>
+    {% endif %}
+    
+    <a class="back" href="/dashboard">← Back to Dashboard</a>
+</div>
+
+<script>
+    // ✅ Theme toggle logic
+    document.addEventListener("DOMContentLoaded", function() {
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+
+        const applyTheme = (theme) => {
+            if (theme === 'dark') {
+                body.classList.add('dark-mode');
+                themeToggle.checked = true;
+            } else {
+                body.classList.remove('dark-mode');
+                themeToggle.checked = false;
+            }
+        };
+
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) applyTheme(savedTheme);
+
+        themeToggle.addEventListener('change', () => {
+            const theme = themeToggle.checked ? 'dark' : 'light';
+            localStorage.setItem('theme', theme);
+            applyTheme(theme);
+        });
+    });
+
+    // ✅ Validation Function
+    function validateForm() {
+        const textInput = document.getElementById("text_input").value.trim();
+        if (!textInput) {
+            Swal.fire({
+                icon: 'warning',
+                title: '⚠️ Empty Field!',
+                text: 'Please paste or enter a job description before scanning.',
+                confirmButtonColor: '#0b3d91'
+            });
+            return false; // Stop form submission
+        }
+        return true; // Allow submission
+    }
+</script>
+
+</body>
+</html>

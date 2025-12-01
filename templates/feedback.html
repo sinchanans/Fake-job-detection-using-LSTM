@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Feedback / Contact Us</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 20px;
+    }
+
+    :root {
+      --bg: #f9f9f9;
+      --text: #222;
+    }
+
+    .dark {
+      --bg: #1e1e1e;
+      --text: #fff;
+    }
+
+    form {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #0b3d91;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #aaa;
+      border-radius: 8px;
+      margin-top: 5px;
+    }
+
+    button {
+      margin-top: 20px;
+      background-color: #0b3d91;
+      color: white;
+      padding: 12px 25px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .success {
+      color: green;
+      text-align: center;
+    }
+  </style>
+</head>
+<body class="{{ 'dark' if dark_mode else '' }}">
+  <form method="POST">
+    <h2>📬 Contact Us / Feedback</h2>
+    {% if success %}
+      <p class="success">Thank you! Your message has been received.</p>
+    {% endif %}
+    <label for="name">Name</label>
+    <input type="text" name="name" required>
+
+    <label for="email">Email</label>
+    <input type="email" name="email" required>
+
+    <label for="category">Category</label>
+    <select name="category">
+      <option>Bug Report</option>
+      <option>Feature Request</option>
+      <option>General Query</option>
+      <option>Suggestion</option>
+    </select>
+
+    <label for="message">Message</label>
+    <textarea name="message" rows="5" required></textarea>
+
+    <button type="submit">Submit</button>
+  </form>
+</body>
+</html>

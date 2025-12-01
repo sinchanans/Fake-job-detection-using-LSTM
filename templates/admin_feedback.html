@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin - Feedback</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- CSS Variables for Theming --- */
+        :root {
+            --bg-color: #f4f6f8;
+            --main-text-color: #333;
+            --card-bg-color: white;
+            --header-bg-color: #0b3d91;
+            --header-text-color: white;
+            --table-header-bg: #0b3d91;
+            --table-header-text: white;
+            --table-border-color: #ddd;
+            --table-row-alt-bg: #f9f9f9;
+            --link-color: #0b3d91;
+            --shadow-color: rgba(0,0,0,0.1);
+        }
+
+        body.dark-mode {
+            --bg-color: #121212;
+            --main-text-color: #e0e0e0;
+            --card-bg-color: #1e1e1e;
+            --header-bg-color: #1a1a1a;
+            --header-text-color: #e0e0e0;
+            --table-header-bg: #2c2c2c;
+            --table-header-text: #e0e0e0;
+            --table-border-color: #444;
+            --table-row-alt-bg: #2a2a2a;
+            --link-color: #8a9ff0;
+            --shadow-color: rgba(0,0,0,0.2);
+        }
+        /* --- End of Theming Variables --- */
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg-color);
+            color: var(--main-text-color);
+            margin: 0;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        header {
+            background-color: var(--header-bg-color);
+            color: var(--header-text-color);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .container {
+            padding: 30px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h2 { 
+            color: var(--link-color); 
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        h2 i {
+            margin-right: 10px;
+        }
+
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            background: var(--card-bg-color); 
+            box-shadow: 0 4px 20px var(--shadow-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td { 
+            padding: 12px 15px; 
+            border-bottom: 1px solid var(--table-border-color); 
+            vertical-align: middle;
+            text-align: left;
+        }
+
+        th { 
+            background-color: var(--table-header-bg); 
+            color: var(--table-header-text); 
+        }
+
+        tr:nth-child(even) {
+            background-color: var(--table-row-alt-bg);
+        }
+
+        textarea {
+            width: 100%;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid var(--table-border-color);
+            margin-bottom: 8px;
+            box-sizing: border-box;
+            background-color: var(--bg-color);
+            color: var(--main-text-color);
+        }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .replied-text {
+            color: var(--secondary-text-color, #555);
+            font-style: italic;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: var(--link-color);
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        /* --- Theme Toggle Switch --- */
+        .theme-switcher { display: flex; align-items: center; }
+        .theme-switcher i { margin: 0 10px; font-size: 16px; }
+        .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 26px; }
+        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #2196F3; }
+        input:checked + .slider:before { transform: translateX(24px); }
+        /* --- End of Theme Switcher --- */
+    </style>
+</head>
+<body>
+
+<header>
+    <h1><i class="fas fa-comments"></i> User Feedback</h1>
+    <div class="theme-switcher">
+        <i class="fas fa-sun"></i>
+        <label class="switch">
+            <input type="checkbox" id="theme-toggle">
+            <span class="slider"></span>
+        </label>
+        <i class="fas fa-moon"></i>
+    </div>
+</header>
+
+<div class="container">
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Category</th>
+                <th>Message</th>
+                <th>Status & Reply</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for f in feedbacks %}
+            <tr>
+                <td>{{ f.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+                <td>{{ f.name }}</td>
+                <td>{{ f.email }}</td>
+                <td>{{ f.category }}</td>
+                <td>{{ f.message }}</td>
+                <td>
+                    {% if f.admin_reply %}
+                        <p class="replied-text"><strong>Replied:</strong> {{ f.admin_reply }}</p>
+                    {% else %}
+                        <form action="{{ url_for('reply_to_feedback', feedback_id=f.id) }}" method="POST">
+                            <textarea name="reply_message" rows="2" placeholder="Type your reply..." required></textarea>
+                            <button type="submit">Send Reply</button>
+                        </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="/admin_dashboard" class="back-link">← Back to Dashboard</a>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+
+        const applyTheme = (theme) => {
+            if (theme === 'dark') {
+                body.classList.add('dark-mode');
+                themeToggle.checked = true;
+            } else {
+                body.classList.remove('dark-mode');
+                themeToggle.checked = false;
+            }
+        };
+
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            applyTheme(savedTheme);
+        }
+
+        themeToggle.addEventListener('change', () => {
+            if (themeToggle.checked) {
+                localStorage.setItem('theme', 'dark');
+                applyTheme('dark');
+            } else {
+                localStorage.setItem('theme', 'light');
+                applyTheme('light');
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

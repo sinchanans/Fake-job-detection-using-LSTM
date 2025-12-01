@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Scan History</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- CSS Variables for Theming --- */
+        :root {
+            --bg-color: #f4f6f8;
+            --main-text-color: #333;
+            --card-bg-color: white;
+            --header-bg-color: #0b3d91;
+            --header-text-color: white;
+            --table-header-bg: #0b3d91;
+            --table-header-text: white;
+            --table-border-color: #ddd;
+            --table-row-alt-bg: #f9f9f9;
+            --link-color: #0b3d91;
+            --shadow-color: rgba(0,0,0,0.1);
+        }
+
+        body.dark-mode {
+            --bg-color: #121212;
+            --main-text-color: #e0e0e0;
+            --card-bg-color: #1e1e1e;
+            --header-bg-color: #1a1a1a;
+            --header-text-color: #e0e0e0;
+            --table-header-bg: #2c2c2c;
+            --table-header-text: #e0e0e0;
+            --table-border-color: #444;
+            --table-row-alt-bg: #2a2a2a;
+            --link-color: #8a9ff0;
+            --shadow-color: rgba(0,0,0,0.2);
+        }
+        /* --- End of Theming Variables --- */
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-color);
+            color: var(--main-text-color);
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        header {
+            background-color: var(--header-bg-color);
+            color: var(--header-text-color);
+            padding: 20px 40px;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+        
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: var(--card-bg-color);
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px var(--shadow-color);
+            transition: background-color 0.3s;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: var(--link-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+        }
+
+        th, td {
+            border: 1px solid var(--table-border-color);
+            padding: 12px 15px;
+            text-align: left;
+            vertical-align: middle;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        th {
+            background-color: var(--table-header-bg);
+            color: var(--table-header-text);
+        }
+
+        tr:nth-child(even) {
+            background-color: var(--table-row-alt-bg);
+        }
+
+        a {
+            color: var(--link-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back {
+            margin-top: 20px;
+            display: inline-block;
+        }
+        
+        .delete-btn {
+            background-color: #e53e3e;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        
+        .delete-btn:hover {
+            background-color: #c53030;
+        }
+
+        /* --- Theme Toggle Switch --- */
+        .theme-switcher {
+            display: flex;
+            align-items: center;
+        }
+        .theme-switcher i {
+            margin: 0 10px;
+            font-size: 16px;
+        }
+        .switch {
+          position: relative;
+          display: inline-block;
+          width: 50px;
+          height: 26px;
+        }
+        .switch input { 
+          opacity: 0;
+          width: 0;
+          height: 0;
+        }
+        .slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: #ccc;
+          transition: .4s;
+          border-radius: 26px;
+        }
+        .slider:before {
+          position: absolute;
+          content: "";
+          height: 20px;
+          width: 20px;
+          left: 3px;
+          bottom: 3px;
+          background-color: white;
+          transition: .4s;
+          border-radius: 50%;
+        }
+        input:checked + .slider {
+          background-color: #2196F3;
+        }
+        input:checked + .slider:before {
+          transform: translateX(24px);
+        }
+        /* --- End of Theme Switcher --- */
+    </style>
+</head>
+<body>
+<header>
+    <h1>📜 Scan History</h1>
+    <div class="theme-switcher">
+        <i class="fas fa-sun"></i>
+        <label class="switch">
+            <input type="checkbox" id="theme-toggle">
+            <span class="slider"></span>
+        </label>
+        <i class="fas fa-moon"></i>
+    </div>
+</header>
+
+<div class="container">
+    <h2>Welcome, {{ user_data.name }}</h2>
+
+    {% if scans %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Content</th>
+                    <th>Prediction</th>
+                    <th>Confidence</th>
+                    <th>Type</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for scan in scans %}
+                    <tr>
+                        <td>{{ scan.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td>
+                            {% if scan.image_path %}
+                                <strong>[Image]</strong> {{ scan.text[:50] }}...
+                            {% else %}
+                                {{ scan.text[:60] }}{% if scan.text|length > 60 %}...{% endif %}
+                            {% endif %}
+                        </td>
+                        <td>{{ scan.prediction }}</td>
+                        <td>{{ scan.confidence }}%</td>
+                        <td>{{ 'Image' if scan.image_path else 'Text' }}</td>
+                        <td>
+                            <form action="{{ url_for('delete_scan', scan_id=scan.id) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="delete-btn" onclick="return confirm('Are you sure you want to permanently delete this scan?');">
+                                    Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    {% else %}
+        <p>No scans found.</p>
+    {% endif %}
+
+    <a class="back" href="/dashboard">← Back to Dashboard</a>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+
+        const applyTheme = (theme) => {
+            if (theme === 'dark') {
+                body.classList.add('dark-mode');
+                themeToggle.checked = true;
+            } else {
+                body.classList.remove('dark-mode');
+                themeToggle.checked = false;
+            }
+        };
+
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            applyTheme(savedTheme);
+        }
+
+        themeToggle.addEventListener('change', () => {
+            if (themeToggle.checked) {
+                localStorage.setItem('theme', 'dark');
+                applyTheme('dark');
+            } else {
+                localStorage.setItem('theme', 'light');
+                applyTheme('light');
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

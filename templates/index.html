@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fake Job Detector</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background: url('{{ url_for('static', filename='Images/bg3.jpeg') }}') no-repeat center center fixed;
+            background-size: cover;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            right: 0;
+            top: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding-top: 100px;
+             box-shadow: -2px 0 10px rgba(0, 0, 0, 0.4)
+            
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            text-align: center;
+            border-bottom: 1px solid #444;
+            
+        }
+
+        .sidebar a:hover {
+            background-color: #2196f3;
+        }
+
+        .main {
+            margin-right: 250px;
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+            color: #fff;
+        }
+
+        .typewriter h1 {
+            overflow: hidden;
+            border-right: .15em solid orange;
+            white-space: nowrap;
+            margin: 0 auto;
+            letter-spacing: .1em;
+            animation: typing 4s steps(40, end), blink-caret .75s step-end infinite,blink 0.7s infinite;
+            font-size: 2em;
+             color:#d3dee3;
+             background-color: rgb(0, 0, 0,0.6);
+             font-size: 500;
+             content: '|';                   
+      
+       
+        }
+
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: orange }
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 10px;
+            right: 20px;
+            color: #ccc;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <a href="{{ url_for('admin_login') }}">Admin Login</a>
+        <a href="{{ url_for('user_login') }}">User Login</a>
+        <a href="{{ url_for('register') }}">User Register</a>
+
+    </div>
+
+    <div class="main">
+        <div class="typewriter">
+            <h1><b>Detect Fake Job Postings </b></h1>
+        </div>
+    </div>
+
+    <div class="footer">© 2025 Fake Job Detection System</div>
+
+</body>
+</html> shift side bar to another side 

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fake Job Detector</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            background: #f7f7f7;
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+            margin-bottom: 15px;
+        }
+        select, button {
+            padding: 10px;
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
+        .result {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .warning {
+            color: darkorange;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h2>🕵️‍♀️ Fake Job Post Detector</h2>
+    <form method="POST">
+        <label>Paste Job Description:</label><br>
+        <textarea name="job_desc" placeholder="Enter job description here..."></textarea><br>
+
+        <label>Select Model:</label><br>
+        <select name="model">
+            <option value="Random Forest">Random Forest</option>
+            <option value="XGBoost">XGBoost</option>
+            <option value="LightGBM">LightGBM</option>
+        </select><br>
+
+        <button type="submit">Predict</button>
+    </form>
+
+    {% if prediction %}
+        <div class="result">{{ prediction }} (Confidence: {{ confidence }}%)</div>
+    {% endif %}
+    {% if warning %}
+        <div class="warning">{{ warning }}</div>
+    {% endif %}
+</body>
+</html>

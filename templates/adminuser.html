@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin - Users</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #f9f9f9; }
+        h2 { color: #0b3d91; }
+        table { width: 100%; border-collapse: collapse; background: white; }
+        th, td { padding: 12px; border: 1px solid #ccc; }
+        th { background-color: #0b3d91; color: white; }
+    </style>
+</head>
+<body>
+    <h2>👥 Registered Users</h2>
+    <table>
+        <tr><th>Name</th><th>Email</th><th>Phone</th></tr>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.name }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.phone }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Image Scan - Fake Job Detection</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- ✅ SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        /* --- CSS Variables for Theming --- */
+        :root {
+            --bg-color: #f4f6f8;
+            --main-text-color: #333;
+            --card-bg-color: white;
+            --header-bg-color: #0b3d91;
+            --header-text-color: white;
+            --link-color: #0b3d91;
+            --button-bg-color: #0b3d91;
+            --button-text-color: white;
+            --input-border-color: #ccc;
+            --input-bg-color: white;
+            --shadow-color: rgba(0,0,0,0.1);
+            --output-bg-color: #eef;
+            --fake-bg: #ffe6e6;
+            --fake-text: #cc0000;
+            --legit-bg: #e6ffe6;
+            --legit-text: #006600;
+            --suspicious-bg: #fff8e6;
+            --suspicious-text: #8a6d3b;
+        }
+
+        body.dark-mode {
+            --bg-color: #121212;
+            --main-text-color: #e0e0e0;
+            --card-bg-color: #1e1e1e;
+            --header-bg-color: #1a1a1a;
+            --header-text-color: #e0e0e0;
+            --link-color: #8a9ff0;
+            --button-bg-color: #8a9ff0;
+            --button-text-color: #121212;
+            --input-border-color: #444;
+            --input-bg-color: #2a2a2a;
+            --shadow-color: rgba(0,0,0,0.2);
+            --output-bg-color: #2a2a3a;
+            --fake-bg: #5a2a2a;
+            --fake-text: #ff8a8a;
+            --legit-bg: #2a4c2a;
+            --legit-text: #a7d7a7;
+            --suspicious-bg: #5a4a2a;
+            --suspicious-text: #e0c484;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-color);
+            color: var(--main-text-color);
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        header {
+            background-color: var(--header-bg-color);
+            color: var(--header-text-color);
+            padding: 20px 40px;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 40px auto;
+            background: var(--card-bg-color);
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px var(--shadow-color);
+            transition: background-color 0.3s;
+        }
+
+        h2, h3 {
+            margin-top: 0;
+            color: var(--link-color);
+        }
+
+        input[type="file"] {
+            margin-top: 15px;
+            color: var(--main-text-color);
+        }
+
+        button {
+            background-color: var(--button-bg-color);
+            color: var(--button-text-color);
+            border: none;
+            padding: 12px 30px;
+            margin-top: 20px;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .output {
+            margin-top: 30px;
+            background-color: var(--output-bg-color);
+            padding: 20px;
+            border-radius: 8px;
+            white-space: pre-wrap;
+            border: 1px solid var(--input-border-color);
+        }
+
+        .result {
+            font-size: 18px;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .fake { background-color: var(--fake-bg); color: var(--fake-text); }
+        .legit { background-color: var(--legit-bg); color: var(--legit-text); }
+        .suspicious { background-color: var(--suspicious-bg); color: var(--suspicious-text); }
+
+        a {
+            color: var(--link-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back {
+            margin-top: 20px;
+            display: inline-block;
+        }
+
+        /* --- Theme Toggle Switch --- */
+        .theme-switcher {
+            display: flex;
+            align-items: center;
+        }
+        .theme-switcher i {
+            margin: 0 10px;
+            font-size: 16px;
+        }
+        .switch {
+          position: relative;
+          display: inline-block;
+          width: 50px;
+          height: 26px;
+        }
+        .switch input { 
+          opacity: 0;
+          width: 0;
+          height: 0;
+        }
+        .slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: #ccc;
+          transition: .4s;
+          border-radius: 26px;
+        }
+        .slider:before {
+          position: absolute;
+          content: "";
+          height: 20px;
+          width: 20px;
+          left: 3px;
+          bottom: 3px;
+          background-color: white;
+          transition: .4s;
+          border-radius: 50%;
+        }
+        input:checked + .slider {
+          background-color: #2196F3;
+        }
+        input:checked + .slider:before {
+          transform: translateX(24px);
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>📷 Image Scan</h1>
+    <div class="theme-switcher">
+        <i class="fas fa-sun"></i>
+        <label class="switch">
+            <input type="checkbox" id="theme-toggle">
+            <span class="slider"></span>
+        </label>
+        <i class="fas fa-moon"></i>
+    </div>
+</header>
+
+<div class="container">
+    <form method="POST" enctype="multipart/form-data" onsubmit="return validateImage()">
+        <label for="image_file"><strong>Select an image file (JPG, PNG):</strong></label><br>
+        <input type="file" name="image_file" id="image_file" accept="image/*" required><br>
+        <button type="submit">Scan & Detect</button>
+    </form>
+
+    {% if extracted_text %}
+        <div class="output">
+            <h3>📄 Extracted Text:</h3>
+            <p>{{ extracted_text }}</p>
+        </div>
+    {% endif %}
+
+    {% if prediction %}
+        <div class="result 
+            {% if 'Fake' in prediction %}fake{% elif 'Suspicious' in prediction %}suspicious{% else %}legit{% endif %}">
+            <strong>{{ prediction }}</strong> (Confidence: {{ confidence }}%)
+        </div>
+    {% endif %}
+    <a class="back" href="/dashboard">← Back to Dashboard</a>
+</div>
+
+<script>
+    // ✅ Theme toggle
+    document.addEventListener("DOMContentLoaded", function() {
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+
+        const applyTheme = (theme) => {
+            if (theme === 'dark') {
+                body.classList.add('dark-mode');
+                themeToggle.checked = true;
+            } else {
+                body.classList.remove('dark-mode');
+                themeToggle.checked = false;
+            }
+        };
+
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) applyTheme(savedTheme);
+
+        themeToggle.addEventListener('change', () => {
+            const theme = themeToggle.checked ? 'dark' : 'light';
+            localStorage.setItem('theme', theme);
+            applyTheme(theme);
+        });
+    });
+
+    // ✅ Image Validation Function
+    function validateImage() {
+        const fileInput = document.getElementById("image_file");
+        const file = fileInput.files[0];
+
+        if (!file) {
+            Swal.fire({
+                icon: 'warning',
+                title: '⚠️ No File Selected',
+                text: 'Please upload an image before scanning.',
+                confirmButtonColor: '#0b3d91'
+            });
+            return false;
+        }
+
+        const validTypes = ["image/jpeg", "image/png", "image/jpg"];
+        if (!validTypes.includes(file.type)) {
+            Swal.fire({
+                icon: 'error',
+                title: '❌ Invalid File Type',
+                text: 'Only JPG and PNG files are allowed.',
+                confirmButtonColor: '#0b3d91'
+            });
+            return false;
+        }
+
+        const maxSize = 5 * 1024 * 1024; // 5MB
+        if (file.size > maxSize) {
+            Swal.fire({
+                icon: 'error',
+                title: '📁 File Too Large',
+                text: 'Please upload an image smaller than 5MB.',
+                confirmButtonColor: '#0b3d91'
+            });
+            return false;
+        }
+
+        return true;
+    }
+</script>
+</body>
+</html>

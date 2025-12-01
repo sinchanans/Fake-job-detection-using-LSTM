@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <div class="container">
+        <h2>Register</h2>
+        <form method="POST">
+            <input type="text" name="name" placeholder="Name" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="text" name="phone" placeholder="Phone Number" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Register</button>
+        </form>
+
+        <p>Already have an account? 
+           <a href="{{ url_for('user_login') }}">login here</a>
+        </p>
+    </div>
+
+    <!-- Show SweetAlert2 popup for messages -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <script>
+          const msg = "{{ messages[0] }}";
+          let icon = "info";
+          if (msg.includes("✅")) icon = "success";
+          else if (msg.includes("⚠️")) icon = "warning";
+          else if (msg.includes("📧") || msg.includes("📞") || msg.includes("🔐")) icon = "error";
+
+          Swal.fire({
+            title: msg,
+            icon: icon,
+            confirmButtonColor: '#0b3d91'
+          });
+        </script>
+      {% endif %}
+    {% endwith %}
+</body>
+</html>
+
+

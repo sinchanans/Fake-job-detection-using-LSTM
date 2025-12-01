@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- CSS Variables for Theming --- */
+        :root {
+            --bg-color: #f0f2f5;
+            --main-text-color: #333;
+            --secondary-text-color: #555;
+            --card-bg-color: white;
+            --sidebar-bg-color: #0b3d91;
+            --sidebar-text-color: white;
+            --link-color: #0b3d91;
+            --button-bg-color: #0b3d91;
+            --button-text-color: white;
+            --input-border-color: #ccc;
+            --input-bg-color: white;
+            --shadow-color: rgba(0,0,0,0.1);
+            --success-text: #3c763d;
+            --danger-text: #a94442;
+            --hr-color: #e0e0e0;
+        }
+
+        body.dark-mode {
+            --bg-color: #121212;
+            --main-text-color: #e0e0e0;
+            --secondary-text-color: #a0a0a0;
+            --card-bg-color: #1e1e1e;
+            --sidebar-bg-color: #1a1a1a;
+            --sidebar-text-color: #e0e0e0;
+            --link-color: #8a9ff0;
+            --button-bg-color: #8a9ff0;
+            --button-text-color: #121212;
+            --input-border-color: #444;
+            --input-bg-color: #2a2a2a;
+            --shadow-color: rgba(0,0,0,0.2);
+            --success-text: #a7d7a7;
+            --danger-text: #f8a5a5;
+            --hr-color: #444;
+        }
+        /* --- End of Theming Variables --- */
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-color);
+            display: flex;
+            color: var(--main-text-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: var(--sidebar-bg-color);
+            color: var(--sidebar-text-color);
+            height: 100vh;
+            padding: 20px;
+            position: fixed;
+            transition: width 0.3s, background-color 0.3s;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar.collapsed {
+            width: 70px;
+        }
+
+        .sidebar h2, .sidebar a span {
+            transition: opacity 0.3s;
+        }
+
+        .sidebar.collapsed h2,
+        .sidebar.collapsed a span {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .toggle-btn {
+            cursor: pointer;
+            margin-bottom: 20px;
+            background: none;
+            border: none;
+            color: var(--sidebar-text-color);
+            font-size: 20px;
+        }
+
+        .sidebar a {
+            color: var(--sidebar-text-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: background-color 0.2s;
+        }
+        
+        .sidebar a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar i {
+            width: 25px;
+            margin-right: 10px;
+        }
+
+        .main-content {
+            margin-left: 270px;
+            padding: 30px;
+            width: calc(100% - 270px);
+            transition: margin-left 0.3s, width 0.3s;
+        }
+
+        .collapsed + .main-content {
+            margin-left: 90px;
+            width: calc(100% - 90px);
+        }
+
+        .form-box {
+            background: var(--card-bg-color);
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px var(--shadow-color);
+            max-width: 500px;
+            margin: 0 auto;
+            transition: background-color 0.3s;
+        }
+
+        .form-box h2 {
+            margin-top: 0;
+            color: var(--link-color);
+        }
+
+        label {
+            display: block;
+            margin-top: 20px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--input-border-color);
+            background-color: var(--input-bg-color);
+            color: var(--main-text-color);
+            margin-top: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+        }
+        
+        input:disabled {
+            background-color: #eee;
+            cursor: not-allowed;
+        }
+        
+        body.dark-mode input:disabled {
+            background-color: #252525;
+            color: #777;
+        }
+
+        button {
+            margin-top: 30px;
+            width: 100%;
+            background-color: var(--button-bg-color);
+            color: var(--button-text-color);
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+        
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .message {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: 500;
+        }
+        .success { color: var(--success-text); }
+        .error { color: var(--danger-text); }
+
+        hr {
+            border: none;
+            border-top: 1px solid var(--hr-color);
+            margin: 40px 0;
+        }
+
+        /* --- Theme Toggle Switch --- */
+        .theme-switcher {
+            margin-top: auto;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .theme-switcher span {
+            margin: 0 10px;
+            font-size: 16px;
+        }
+        .switch {
+          position: relative;
+          display: inline-block;
+          width: 50px;
+          height: 26px;
+        }
+        .switch input { 
+          opacity: 0;
+          width: 0;
+          height: 0;
+        }
+        .slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: #ccc;
+          transition: .4s;
+          border-radius: 26px;
+        }
+        .slider:before {
+          position: absolute;
+          content: "";
+          height: 20px;
+          width: 20px;
+          left: 3px;
+          bottom: 3px;
+          background-color: white;
+          transition: .4s;
+          border-radius: 50%;
+        }
+        input:checked + .slider {
+          background-color: #2196F3;
+        }
+        input:checked + .slider:before {
+          transform: translateX(24px);
+        }
+        /* --- End of Theme Switcher --- */
+    </style>
+</head>
+<body>
+
+<div class="sidebar" id="sidebar">
+  <div>
+    <button class="toggle-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+    <h2>👨‍💼 {{ user_data.name }}</h2>
+    <a href="/dashboard"><i class="fas fa-circle-info"></i> <span>Fake Job Info</span></a>
+    <a href="/text_scan"><i class="fas fa-keyboard"></i> <span>Text Scan</span></a>
+    <a href="/image_scan"><i class="fas fa-image"></i> <span>Image Scan</span></a>
+    <a href="/history"><i class="fas fa-clock"></i> <span>History</span></a>
+    <a href="/profile"><i class="fas fa-user"></i> <span>My Profile</span></a>
+  </div>
+  
+  <div class="theme-switcher">
+      <i class="fas fa-sun"></i>
+      <label class="switch">
+          <input type="checkbox" id="theme-toggle">
+          <span class="slider"></span>
+      </label>
+      <i class="fas fa-moon"></i>
+  </div>
+  <a href="/logout"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>
+</div>
+
+<div class="main-content" id="main-content">
+  <div class="form-box">
+    <h2>👤 My Profile</h2>
+    <form action="{{ url_for('profile') }}" method="POST" id="profileForm">
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name" value="{{ user_data.name }}" required>
+
+      <label for="email">Email</label>
+      <input type="email" id="email" value="{{ user_data.email }}" disabled>
+
+      <label for="phone">Phone</label>
+      <input type="text" id="phone" name="phone" value="{{ user_data.phone }}" required>
+
+      <button type="submit">Update Profile</button>
+
+      {% if message %}
+        <div class="message success">{{ message }}</div>
+      {% endif %}
+    </form>
+
+    <hr>
+
+    <h2>🔒 Change Password</h2>
+    <form action="{{ url_for('change_password') }}" method="POST" id="passwordForm">
+        <label for="current_password">Current Password</label>
+        <input type="password" id="current_password" name="current_password" required>
+
+        <label for="new_password">New Password</label>
+        <input type="password" id="new_password" name="new_password" required>
+
+        <label for="confirm_password">Confirm New Password</label>
+        <input type="password" id="confirm_password" name="confirm_password" required>
+
+        <button type="submit">Change Password</button>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="message {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </form>
+  </div>
+</div>
+
+<script>
+  // ---------------- Sidebar toggle ----------------
+  function toggleSidebar() {
+    const sidebar = document.getElementById("sidebar");
+    sidebar.classList.toggle("collapsed");
+  }
+
+  // ---------------- Profile form validation ----------------
+  const profileForm = document.getElementById("profileForm");
+  profileForm.addEventListener("submit", function(e) {
+    const name = document.getElementById("name").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const phonePattern = /^[0-9]{10}$/;
+
+    if (name.length < 3) {
+      alert("⚠️ Name must be at least 3 characters long.");
+      e.preventDefault();
+      return;
+    }
+
+    if (!phonePattern.test(phone)) {
+      alert("⚠️ Phone number must be exactly 10 digits.");
+      e.preventDefault();
+      return;
+    }
+  });
+
+  // ---------------- Password form validation ----------------
+  const passwordForm = document.getElementById("passwordForm");
+  passwordForm.addEventListener("submit", function(e) {
+    const currentPassword = document.getElementById("current_password").value.trim();
+    const newPassword = document.getElementById("new_password").value.trim();
+    const confirmPassword = document.getElementById("confirm_password").value.trim();
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      alert("⚠️ All password fields are required.");
+      e.preventDefault();
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      alert("⚠️ New password must be at least 6 characters long.");
+      e.preventDefault();
+      return;
+    }
+
+    if (newPassword === currentPassword) {
+      alert("⚠️ New password cannot be the same as the current password.");
+      e.preventDefault();
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      alert("⚠️ New password and confirm password do not match.");
+      e.preventDefault();
+      return;
+    }
+  });
+
+  // ---------------- Theme toggle ----------------
+  document.addEventListener("DOMContentLoaded", function() {
+    const themeToggle = document.getElementById('theme-toggle');
+    const body = document.body;
+
+    const applyTheme = (theme) => {
+        if (theme === 'dark') {
+            body.classList.add('dark-mode');
+            themeToggle.checked = true;
+        } else {
+            body.classList.remove('dark-mode');
+            themeToggle.checked = false;
+        }
+    };
+
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        applyTheme(savedTheme);
+    }
+
+    themeToggle.addEventListener('change', () => {
+        if (themeToggle.checked) {
+            localStorage.setItem('theme', 'dark');
+            applyTheme('dark');
+        } else {
+            localStorage.setItem('theme', 'light');
+            applyTheme('light');
+        }
+    });
+  });
+
+  // ---------------- Phone input only numbers ----------------
+  const phoneInput = document.getElementById("phone");
+  phoneInput.addEventListener("input", function() {
+    this.value = this.value.replace(/[^0-9]/g, '');
+  });
+</script>
+
+</body>
+</html>
+
+
