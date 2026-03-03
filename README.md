@@ -72,13 +72,10 @@ Then open \http://127.0.0.1:5000/\ in the browser.
 
 ## Notes about model files & large assets
 - Large model files (e.g., \lstm_model.keras\) are **not included** in this repo by default to keep the repository lightweight.
-- To include large models, use **Git LFS** or host them in cloud storage and provide download instructions.
 
 ## Add your own dataset
-Place raw data in the \data/\ folder (ignored by \.gitignore\), and run preprocessing & training scripts.
+Place raw data in the \data folder (ignored by \.gitignore\), and run preprocessing & training scripts.
 
-## License
-Add your preferred license here (e.g., MIT).
 
 ## Contact
 Sinchana N S — sinchanagowda4758@gmail.com 
